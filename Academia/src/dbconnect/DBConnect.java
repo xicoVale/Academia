@@ -2,7 +2,6 @@ package dbconnect;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -26,14 +25,10 @@ public class DBConnect {
 	public Connection getConnection(){
 		return conn;
 	}
-	public void queryDb(String query){
+	public void updateDb(String query){
 		try {
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery(query);
-			while (rs.next()) {
-				System.out.println("Product: " + rs.getString("productName"));
-			}
-			
+			st.executeUpdate(query);	
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 

@@ -52,8 +52,8 @@ public class Customer extends Tables {
 				query += ", " + iterator.next().toString();
 			}
 		}
-		query += ");";
+		query += ")";
 		
-		conn.queryDb(query);
+		conn.updateDb(query);
 	}
 }
