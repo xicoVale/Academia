@@ -14,12 +14,12 @@ public class Orders extends Tables {
 	}
 
 	@Override
-	public ArrayList<String> getAtributes() {
+	public ArrayList<String> getAttributes() {
 		return attributes;
 	}
 
 	@Override
-	public void setAtributes() {
+	public void setAttributes() {
 		this.attributes = new ArrayList<String>();
 	}
 	

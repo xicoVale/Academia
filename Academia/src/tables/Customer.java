@@ -11,11 +11,11 @@ public class Customer extends Tables {
 	private DBConnect conn;
 	
 	public Customer(){
-		setAtributes();
+		setAttributes();
 	}
 	
 	public Customer(DBConnect conn){
-		setAtributes();
+		setAttributes();
 		setConn(conn);
 	}
 	
@@ -24,11 +24,11 @@ public class Customer extends Tables {
 		return SIZE;
 	}
 	@Override
-	public ArrayList<String> getAtributes() {
+	public ArrayList<String> getAttributes() {
 		return this.attributes;
 	}
 	@Override
-	public void setAtributes() {
+	public void setAttributes() {
 		this.attributes = new ArrayList<String>(SIZE);
 	}
 	public DBConnect getConn() {

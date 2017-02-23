@@ -13,11 +13,11 @@ public class OrderDetails extends Tables {
 		return SIZE;
 	}
 	@Override
-	public ArrayList<String> getAtributes() {
+	public ArrayList<String> getAttributes() {
 		return this.attributes;
 	}
 	@Override
-	public void setAtributes() {
+	public void setAttributes() {
 		this.attributes = new ArrayList<String>();
 	}
 }
