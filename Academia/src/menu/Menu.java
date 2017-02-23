@@ -3,9 +3,26 @@ package menu;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import dbconnect.DBConnect;
 import tables.Customer;
 
 public class Menu {
+
+	private DBConnect conn;
+
+	private Menu() {}
+	
+	public Menu(DBConnect conn) {
+		this.setConn(conn);
+	}
+
+	public DBConnect getConn() {
+		return conn;
+	}
+
+	public void setConn(DBConnect conn) {
+		this.conn = conn;
+	}
 
 	public void SelectOption() {
 
@@ -46,32 +63,35 @@ public class Menu {
 
 	public void RegistNewClient(Scanner input) {
 
-		Customer newCustomer = new Customer();
+		Customer newCustomer = new Customer(conn);
 		ArrayList<String> attributes = newCustomer.getAttributes();
-		
-		System.out.println("Customer name: ");
+
+		input.nextLine();
+		System.out.print("Customer name: ");
 		attributes.add(input.nextLine());
-		System.out.println("Contact Last name: ");
+		System.out.print("Contact Last name: ");
 		attributes.add(input.nextLine());
-		System.out.println("Contact First name: ");
+		System.out.print("Contact First name: ");
 		attributes.add(input.nextLine());
-		System.out.println("Phone number: ");
+		System.out.print("Phone number: ");
 		attributes.add(input.nextLine());
-		System.out.println("Address Line 1: ");
+		System.out.print("Address Line 1: ");
 		attributes.add(input.nextLine());
-		System.out.println("Address Line 2: ");
+		System.out.print("Address Line 2: ");
 		attributes.add(input.nextLine());
-		System.out.println("City: ");
+		System.out.print("City: ");
 		attributes.add(input.nextLine());
-		System.out.println("State: ");
+		System.out.print("State: ");
 		attributes.add(input.nextLine());
-		System.out.println("Postal Code: ");
+		System.out.print("Postal Code: ");
 		attributes.add(input.nextLine());
-		System.out.println("Country: ");
+		System.out.print("Country: ");
 		attributes.add(input.nextLine());
 		attributes.add("n/a");
 		attributes.add("n/a");
-		
+
+		newCustomer.register();
+
 	}
 
 }
