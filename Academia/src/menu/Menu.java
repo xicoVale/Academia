@@ -1,6 +1,9 @@
 package menu;
 
+import java.util.ArrayList;
 import java.util.Scanner;
+
+import tables.Customer;
 
 public class Menu {
 
@@ -22,9 +25,7 @@ public class Menu {
 			switch (option) {
 
 			case 1:
-				int newCostumerNumber;
-				String newCostumerName;
-
+				RegistNewClient(input);
 				break;
 
 			case 2:
@@ -42,4 +43,35 @@ public class Menu {
 		}
 		input.close();
 	}
+
+	public void RegistNewClient(Scanner input) {
+
+		Customer newCustomer = new Customer();
+		ArrayList<String> attributes = newCustomer.getAttributes();
+		
+		System.out.println("Customer name: ");
+		attributes.add(input.nextLine());
+		System.out.println("Contact Last name: ");
+		attributes.add(input.nextLine());
+		System.out.println("Contact First name: ");
+		attributes.add(input.nextLine());
+		System.out.println("Phone number: ");
+		attributes.add(input.nextLine());
+		System.out.println("Address Line 1: ");
+		attributes.add(input.nextLine());
+		System.out.println("Address Line 2: ");
+		attributes.add(input.nextLine());
+		System.out.println("City: ");
+		attributes.add(input.nextLine());
+		System.out.println("State: ");
+		attributes.add(input.nextLine());
+		System.out.println("Postal Code: ");
+		attributes.add(input.nextLine());
+		System.out.println("Country: ");
+		attributes.add(input.nextLine());
+		attributes.add("n/a");
+		attributes.add("n/a");
+		
+	}
+
 }
