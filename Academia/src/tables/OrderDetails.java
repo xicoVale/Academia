@@ -17,7 +17,7 @@ public class OrderDetails extends Tables {
 		return this.attributes;
 	}
 	@Override
-	public void setAtributes(ArrayList<String> attributes) {
-		this.attributes = attributes;
+	public void setAtributes() {
+		this.attributes = new ArrayList<String>();
 	}
 }

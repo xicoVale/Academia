@@ -6,5 +6,5 @@ abstract public class Tables {
 
 	public abstract int getSize();
 	public abstract ArrayList<String> getAtributes();
-	public abstract void setAtributes(ArrayList<String> attributes);
+	public abstract void setAtributes();
 }

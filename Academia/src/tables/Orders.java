@@ -19,8 +19,8 @@ public class Orders extends Tables {
 	}
 
 	@Override
-	public void setAtributes(ArrayList<String> attributes) {
-		this.attributes = attributes;
+	public void setAtributes() {
+		this.attributes = new ArrayList<String>();
 	}
 	
 }

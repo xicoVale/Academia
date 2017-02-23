@@ -1,12 +1,15 @@
 package tables;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Customer extends Tables {
-	private final int SIZE = 13;
+	private final int SIZE = 12;
 	private ArrayList<String> attributes;
 	
-	public Customer(){}
+	public Customer(){
+		setAtributes();
+	}
 	
 	@Override
 	public int getSize() {
@@ -17,7 +20,15 @@ public class Customer extends Tables {
 		return this.attributes;
 	}
 	@Override
-	public void setAtributes(ArrayList<String> attributes) {
-		this.attributes = attributes;
+	public void setAtributes() {
+		this.attributes = new ArrayList<String>();
+	}
+	public void register() {
+		Iterator iterator = attributes.iterator();
+		String query = "INSERT INTO customer (customerName, contactLastName, contactFistName, phone, adressLine1, adressLine2,";
+		
+		while (iterator.hasNext()) {
+			
+		}
 	}
 }
