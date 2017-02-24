@@ -30,7 +30,7 @@ public class Menu {
 		this.conn = conn;
 	}
 
-	public void SelectOption() {
+	public void selectOption() {
 
 		Scanner input = new Scanner(System.in);
 		int option;
@@ -48,15 +48,15 @@ public class Menu {
 			switch (option) {
 
 			case 1:
-				RegistNewClient(input);
+				registerNewClient(input);
 				break;
 
 			case 2:
-				RegistNewOrder(input);
+				registerNewOrder(input);
 				break;
 
 			case 3:
-
+				exportClients(input);
 				break;
 
 			case 4:
@@ -70,7 +70,7 @@ public class Menu {
 	}
 
 	/** [1] Método que regista novo cliente e atualiza a Database **/
-	public void RegistNewClient(Scanner input) {
+	public void registerNewClient(Scanner input) {
 
 		Customer newCustomer = new Customer(conn);
 		ArrayList<String> attributes = newCustomer.getAttributes();
@@ -146,7 +146,7 @@ public class Menu {
 	 * Database e a atualiza
 	 **/
 
-	public void RegistNewOrder(Scanner input) {
+	public void registerNewOrder(Scanner input) {
 
 		Orders newOrder = new Orders(conn);
 		ArrayList<String> attributes = newOrder.getAttributes();
@@ -228,11 +228,13 @@ public class Menu {
 	 * binário
 	 **/
 
-	public void ExportListOfClients(Scanner input){
+	public void exportClients(Scanner input){
 		
+		input.nextLine();
 		Customer customer = new Customer(conn);
 		System.out.println("Export file path: ");
-		customer.exportCustomers(input.nextLine());
+		String path = input.nextLine();
+		customer.exportCustomers(path);
 	}
 }
 

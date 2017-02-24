@@ -10,7 +10,7 @@ public class Main {
 		try (DBConnect conn = DBConnect.newDBC()){
 			menu = new Menu(conn);
 			
-			menu.SelectOption();
+			menu.selectOption();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -95,20 +96,23 @@ public class Customer extends Tables {
 	 * @param path Where the export file should be
 	 */
 	public void exportCustomers(String path) {
-		BufferedWriter file;
+		BufferedWriter file = null;
 		String query = "SELECT * FROM customers ORDER BY customerNumber ASC";
 		ArrayList <Blob> blobs = new ArrayList<Blob>();
 		try {
-			int col = 1;
 			file = new BufferedWriter(new FileWriter(path));
 			ResultSet res = conn.query(query);
-			while(res.next()) {
+			ResultSetMetaData rsmd = res.getMetaData();
+			
+			int cols = rsmd.getColumnCount();
+			for (int col = 1; col <= cols; col++) {
+				res.next();
 				blobs.add(res.getBlob(col));
-				col++;
 			}
 			for (Blob blob : blobs) {
 				file.write(blob.toString());
 			}
+			file.close();
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
