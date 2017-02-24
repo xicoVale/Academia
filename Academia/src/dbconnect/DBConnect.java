@@ -8,9 +8,27 @@ import java.sql.Statement;
 public class DBConnect {
 	private final String URL = "jdbc:mysql://localhost:3306/data";
 	private Connection conn;
+	private static int single;
 	
-	public DBConnect(){
+	private DBConnect(){
 		connect();
+		single++;
+	}
+	
+	@Override
+	public void finalize() {
+		single = 0;
+	}
+	
+	public static DBConnect newDBC() throws Exception{
+		if (single == 0){
+			DBConnect conn = new DBConnect();
+			return conn;
+		}
+		else{
+			throw new Exception("Database connection already exists");
+		}
+		
 	}
 	
 	private void connect(){

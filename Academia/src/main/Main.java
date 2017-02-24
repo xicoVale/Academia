@@ -6,10 +6,20 @@ import menu.Menu;
 public class Main {
 
 	public static void main(String[] args) {
-		DBConnect conn = new DBConnect();
-		Menu menu = new Menu(conn);
+		DBConnect conn;
+		Menu menu;
+		try {
+			conn = DBConnect.newDBC();
+			menu = new Menu(conn);
+			
+			menu.SelectOption();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		menu.SelectOption();
+		
+		
 	}
 
 }
