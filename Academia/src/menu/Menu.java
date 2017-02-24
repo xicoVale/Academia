@@ -1,6 +1,8 @@
 package menu;
 
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -90,10 +92,10 @@ public class Menu {
 		attributes.add(checkNull(input, "City: "));
 		System.out.print("State: ");
 		attributes.add(input.nextLine());
-	
+
 		System.out.print("Postal Code: ");
 		attributes.add(checkPostalCode(input, "Postal Code: "));
-		
+
 		System.out.print("Country: ");
 		attributes.add(checkNull(input, "Country: "));
 		attributes.add("n/a");
@@ -126,7 +128,7 @@ public class Menu {
 			return reset;
 	}
 
-	/** [1.2] Método que confirma a validade do código postal **/
+	/** [1.3] Método que confirma a validade do código postal **/
 	private String checkPostalCode(Scanner in, String field) {
 		String reset = in.nextLine();
 		if (!reset.matches("(^[0-9]{4}-[0-9]{3})") && !reset.equals("") && !reset.equalsIgnoreCase("n/a")) {
@@ -138,6 +140,7 @@ public class Menu {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * [2] Método que regista nova encomenda de um cliente já existente na
 	 * Database e a atualiza
@@ -151,37 +154,69 @@ public class Menu {
 		OrderDetails newOrderDetails = new OrderDetails();
 		ArrayList<String> attributesDetails = newOrderDetails.getAttributes();
 
+		input.nextLine();
+		System.out.print("Order date: ");
+		attributes.add(checkDateFormat(input, "Order date: "));
+		System.out.print("Required date: ");
+		attributes.add(checkDateFormat(input, "Required date: "));
+		System.out.print("Shipped date: ");
+		attributes.add(checkShipDateFormat(input, "Shipped date: "));
+		System.out.print("Status: ");
+		attributes.add(checkNull(input, "Status: "));
+		System.out.print("Comments: ");
+		attributes.add(input.nextLine());
 		System.out.print("Customer Number: ");
+		attributes.add(checkNull(input, "Customer Number: "));
 
-		// Falta query para ir à database comparar o input do cliente com os
-		// numeros já existentes.
-		// Atribuir-lhe um order number
-		if (input.equals(conn)) {
-			System.out.print("Product code: ");
-			attributesDetails.add(input.nextLine());
-		} else {
-			System.out.println("You are not registered yet.");
-			input.close();
-			RegistNewOrder(input);
-			return;
+		System.out.print("Product code: ");
+		String productCode = checkNull(input, "Product code: ");
+		while (!newOrderDetails.checkProductCode(productCode)) {
+			System.out.println("Product code not found.");
+			System.out.println("Product code: ");
+			productCode = checkNull(input, "Product code: ");
 		}
+		attributesDetails.add(productCode);
+		
+		System.out.print("Quantity: ");
+		attributesDetails.add(checkNull(input, "Quantity: "));
+		System.out.print("Unitary price: ");
+		attributesDetails.add(checkNull(input, "Unitary price: "));
+		System.out.print("Order line number: ");
+		attributesDetails.add(checkNull(input, "Order line number: "));
 
-		// falta query para ir à database confirmar que o product code existe
-		if (input.equals(conn)) {
-			System.out.print("Quantity: ");
-			attributesDetails.add(input.nextLine());
-		} else {
-			System.out.println("Product not found.");
-			input.close();
-			RegistNewOrder(input);
-			return;
-		}
-
-		attributesDetails.add("n/a");
-		attributesDetails.add("n/a");
-
-		// System.out.println("Data/Hora atual: "+c.getTime());
+		newOrder.register();
+		attributesDetails.add(0, newOrder.getOrderNumber());
+		newOrderDetails.register();
+		System.out.println("Registration with success.");
 	}
+
+	/** [2.1] Método que valida o formato da orderDate e requiredDate **/
+
+	private String checkDateFormat(Scanner in, String field) {
+
+		String reset = in.nextLine();
+		try {
+			LocalDate date = LocalDate.parse(reset);
+		} catch (DateTimeParseException e) {
+			System.out.println("Invalid date");
+			return checkDateFormat(in, field);
+		}
+		return reset;
+	}
+
+	/** [2.2] Método que valida o formato da shippedDate, que poder ser NULL **/
+
+	private String checkShipDateFormat(Scanner in, String field) {
+
+		String reset = in.nextLine();
+		if (!reset.equalsIgnoreCase("n/a") || reset.equals("")) {
+			return checkDateFormat(in, field);
+		} else
+			return reset;
+	}
+	
+	
+	
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
