@@ -182,7 +182,7 @@ public class Menu {
 			productCode = checkNull(input, "Product code: ");
 		}
 		attributesDetails.add(productCode);
-		
+
 		System.out.print("Quantity: ");
 		attributesDetails.add(checkNull(input, "Quantity: "));
 		System.out.print("Unitary price: ");
@@ -221,9 +221,6 @@ public class Menu {
 		} else
 			return reset;
 	}
-	
-	
-	
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -231,21 +228,22 @@ public class Menu {
 	 * binário
 	 **/
 
-	public void ExportListOfClients(Customer customerName) throws FileNotFoundException {
-
-		// Blob blob = rs.getBlob(customerName);
-		// InputStream in = blob.getBinaryStream();
-		// OutputStream out = new FileOutputStream("listClients.bin");
-		// byte[] buff = blob.getBytes(1,(int)blob.getLength());
-		// out.write(buff);
-		// out.close();
-
-		// FileOutputStream fos = new FileOutputStream();
-		// fos.write();
-		// ObjectOutputStream oos = new ObjectOutputStream(fos);
-		// Blob blob = result.getBlob("photo");
-		// InputStream inputStream = blob.getBinaryStream();
-		// OutputStream outputStream = new FileOutputStream(filePath);
-
+	public void ExportListOfClients(Scanner input){
+		
+		Customer customer = new Customer(conn);
+		System.out.println("Export file path: ");
+		customer.exportCustomers(input.nextLine());
 	}
 }
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/** [4] Método que exporta a lista de clientes registados para um ficheiro binário **/
+
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/** [5] ... **/
+
+
+
+
