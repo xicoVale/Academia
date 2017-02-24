@@ -51,7 +51,7 @@ public class OrderDetails extends Tables {
 	 */
 	public boolean checkProductCode(String productCode) {
 		String query = "SELECT productCode FROM products WHERE productCode = " + productCode;
-		ResultSet res = conn.query(productCode);
+		ResultSet res = conn.query(query);
 		try {
 			if (!res.next()) {
 				return false;
