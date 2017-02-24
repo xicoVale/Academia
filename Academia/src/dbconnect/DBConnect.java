@@ -66,6 +66,31 @@ public class DBConnect implements AutoCloseable{
 			return res;
 		}
 	}
+	/**
+	 * 
+	 * Checks if a customerNumber is already being used
+	 * 
+	 * @param id
+	 * @return true if the number isn't being used
+	 * @return false if the number is being used or if id isn't a number
+	 */
+	public boolean checkId(String id) {
+		if(!id.matches("(^[0-9]{3})")) {
+			return false;
+		}
+		else {
+			String query = "SELECT customerNumber FROM customers WHERE customerNumber = " + id;
+			ResultSet res = query(query);
+			try {
+				return (res.next());
+			} catch (SQLException e) {
+				System.out.println("SQLException: " + e.getMessage());
+				System.out.println("SQLState: " + e.getSQLState());
+				System.out.println("VendorError: " + e.getErrorCode());
+				return false;
+			} 	
+		}
+	}
 
 	@Override
 	public void close() throws Exception {

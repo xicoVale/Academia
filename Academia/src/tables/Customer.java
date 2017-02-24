@@ -13,7 +13,6 @@ public class Customer extends Tables {
 	// The first part of the insert query
 	private final String INSERT = "INSERT INTO customers (customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, addressLine2, "
 			+ "city, state, postalCode, country, salesRepEmployeeNumber, creditLimit) VALUES(";
-	private final String SELECT = "SELECT * FROM customers WHERE customerNummber = ";
 	
 	public Customer(){
 		setAttributes();
@@ -87,35 +86,5 @@ public class Customer extends Tables {
 		} 
 		return customerNumber;
 	}
-	/**
-	 * 
-	 * Checks if a customerNumber is already being used
-	 * 
-	 * @param id
-	 * @return true if the number isn't being used
-	 * @return false if the number is being used or if id isn't a number
-	 */
-	public boolean checkId(String id) {
-		if(!id.matches("(^[0-9)")) {
-			return false;
-		}
-		else {
-			String query = SELECT + id;
-			ResultSet res = conn.query(query);
-			try {
-				if(!res.next()){
-					return false;
-				}
-				else {
-					return true;
-				}
-			} catch (SQLException e) {
-				System.out.println("SQLException: " + e.getMessage());
-				System.out.println("SQLState: " + e.getSQLState());
-				System.out.println("VendorError: " + e.getErrorCode());
-			} finally {
-				return false;
-			}
-		}
-	}
+	
 }

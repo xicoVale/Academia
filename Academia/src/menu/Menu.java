@@ -148,31 +148,37 @@ public class Menu {
 
 	public void RegistNewOrder(Scanner input) {
 
-		Orders newOrder = new Orders();
+		Orders newOrder = new Orders(conn);
 		ArrayList<String> attributes = newOrder.getAttributes();
 
-		OrderDetails newOrderDetails = new OrderDetails();
+		OrderDetails newOrderDetails = new OrderDetails(conn);
 		ArrayList<String> attributesDetails = newOrderDetails.getAttributes();
 
 		input.nextLine();
 		System.out.print("Order date: ");
-		attributes.add(checkDateFormat(input, "Order date: "));
+		attributes.add(checkDateFormat(input, "Order date (AAAA-MM-DD): "));
 		System.out.print("Required date: ");
-		attributes.add(checkDateFormat(input, "Required date: "));
+		attributes.add(checkDateFormat(input, "Required date (AAAA-MM-DD): "));
 		System.out.print("Shipped date: ");
-		attributes.add(checkShipDateFormat(input, "Shipped date: "));
+		attributes.add(checkShipDateFormat(input, "Shipped date (AAAA-MM-DD): "));
 		System.out.print("Status: ");
 		attributes.add(checkNull(input, "Status: "));
 		System.out.print("Comments: ");
 		attributes.add(input.nextLine());
 		System.out.print("Customer Number: ");
-		attributes.add(checkNull(input, "Customer Number: "));
+		String customerNum = checkNull(input, "Customer Number: ");
+		while (!conn.checkId(customerNum)) {
+			System.out.println("Customer Number not found.");
+			System.out.print("Customer Number: ");
+			customerNum = checkNull(input, "Customer Number: ");
+		}
+		attributes.add(customerNum);
 
 		System.out.print("Product code: ");
 		String productCode = checkNull(input, "Product code: ");
 		while (!newOrderDetails.checkProductCode(productCode)) {
 			System.out.println("Product code not found.");
-			System.out.println("Product code: ");
+			System.out.print("Product code: ");
 			productCode = checkNull(input, "Product code: ");
 		}
 		attributesDetails.add(productCode);
@@ -199,6 +205,7 @@ public class Menu {
 			LocalDate date = LocalDate.parse(reset);
 		} catch (DateTimeParseException e) {
 			System.out.println("Invalid date");
+			System.out.print(field);
 			return checkDateFormat(in, field);
 		}
 		return reset;
@@ -209,7 +216,7 @@ public class Menu {
 	private String checkShipDateFormat(Scanner in, String field) {
 
 		String reset = in.nextLine();
-		if (!reset.equalsIgnoreCase("n/a") || reset.equals("")) {
+		if (!reset.equalsIgnoreCase("n/a") && !reset.equals("")) {
 			return checkDateFormat(in, field);
 		} else
 			return reset;
