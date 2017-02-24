@@ -1,5 +1,9 @@
 package tables;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,7 +17,6 @@ public class Customer extends Tables {
 	// The first part of the insert query
 	private final String INSERT = "INSERT INTO customers (customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, addressLine2, "
 			+ "city, state, postalCode, country, salesRepEmployeeNumber, creditLimit) VALUES(";
-	private final String SELECT = "SELECT * FROM customers WHERE customerNummber = ";
 	
 	public Customer(){
 		setAttributes();
@@ -88,34 +91,30 @@ public class Customer extends Tables {
 		return customerNumber;
 	}
 	/**
-	 * 
-	 * Checks if a customerNumber is already being used
-	 * 
-	 * @param id
-	 * @return true if the number isn't being used
-	 * @return false if the number is being used or if id isn't a number
+	 * Exports the customers table to a file.
+	 * @param path Where the export file should be
 	 */
-	public boolean checkId(String id) {
-		if(!id.matches("(^[0-9)")) {
-			return false;
-		}
-		else {
-			String query = SELECT + id;
+	public void exportCustomers(String path) {
+		BufferedWriter file;
+		String query = "SELECT * FROM customers ORDER BY customerNumber ASC";
+		ArrayList <Blob> blobs = new ArrayList<Blob>();
+		try {
+			int col = 1;
+			file = new BufferedWriter(new FileWriter(path));
 			ResultSet res = conn.query(query);
-			try {
-				if(!res.next()){
-					return false;
-				}
-				else {
-					return true;
-				}
-			} catch (SQLException e) {
-				System.out.println("SQLException: " + e.getMessage());
-				System.out.println("SQLState: " + e.getSQLState());
-				System.out.println("VendorError: " + e.getErrorCode());
-			} finally {
-				return false;
+			while(res.next()) {
+				blobs.add(res.getBlob(col));
+				col++;
 			}
+			for (Blob blob : blobs) {
+				file.write(blob.toString());
+			}
+		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+			System.out.println("SQLState: " + e.getSQLState());
+			System.out.println("VendorError: " + e.getErrorCode());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
