@@ -1,7 +1,8 @@
 package tables;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import dbconnect.DBConnect;
 
@@ -9,6 +10,10 @@ public class Customer extends Tables {
 	private final int SIZE = 12;
 	private ArrayList<String> attributes;
 	private DBConnect conn;
+	// The first part of the insert query
+	private final String INSERT = "INSERT INTO customers (customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, addressLine2, "
+			+ "city, state, postalCode, country, salesRepEmployeeNumber, creditLimit) VALUES(";
+	private final String SELECT = "SELECT * FROM customers WHERE customerNummber = ";
 	
 	public Customer(){
 		setAttributes();
@@ -40,20 +45,41 @@ public class Customer extends Tables {
 	}
 
 	public void register() {
-		Iterator <String> iterator = attributes.iterator();
-		String query = "INSERT INTO customer (customerName, contactLastName, contactFistName, phone, adressLine1, adressLine2, "
-				+ "city, state, postalCode, country, salesRepEmployeeNumber, creditLimit) VALUES(";
+		// Will hold the values provided by user input
+		String query = "'" + getNewCustomerNumber() + "'";
+		// This is used to check weather we are adding the first attribute to the query
+		int initialQuerySize = query.length();
 		
-		while (iterator.hasNext()) {
-			if (iterator.next().equalsIgnoreCase("n/a")) {
+		for (String next : getAttributes()) {
+			//Converts n/a into NULL
+			if (next.equalsIgnoreCase("n/a") || next.equals("")) {
 				query += ", NULL";
 			}
 			else {
-				query += ", " + iterator.next().toString();
+				query += ", '" + next + "'";
 			}
 		}
 		query += ")";
 		
-		conn.updateDb(query);
+		conn.updateDb(INSERT + query);
+	}
+	/**
+	 * Returns the customerNumber the next customer should have
+	 * 
+	 * @return
+	 */
+	private int getNewCustomerNumber() {
+		String getNumber = "SELECT customerNumber FROM customers ORDER BY customerNumber DESC LIMIT 1;";
+		ResultSet res = conn.query(getNumber);
+		int customerNumber = Integer.MIN_VALUE;
+		try {
+			res.next();
+			customerNumber = Integer.parseInt(res.getString("customerNumber")) + 1;
+		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+			System.out.println("SQLState: " + e.getSQLState());
+			System.out.println("VendorError: " + e.getErrorCode());
+		} 
+		return customerNumber;
 	}
 }

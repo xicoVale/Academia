@@ -2,6 +2,7 @@ package dbconnect;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -50,5 +51,18 @@ public class DBConnect {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
+	}
+	public ResultSet query(String query) {
+		ResultSet res = null;
+		try {
+			Statement st = conn.createStatement();
+			res = st.executeQuery(query);
+		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+			System.out.println("SQLState: " + e.getSQLState());
+			System.out.println("VendorError: " + e.getErrorCode());
+		} finally {
+			return res;
+		}
 	}
 }
