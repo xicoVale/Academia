@@ -47,8 +47,6 @@ public class Customer extends Tables {
 	public void register() {
 		// Will hold the values provided by user input
 		String query = "'" + getNewCustomerNumber() + "'";
-		// This is used to check weather we are adding the first attribute to the query
-		int initialQuerySize = query.length();
 		
 		for (String next : getAttributes()) {
 			//Converts n/a into NULL
