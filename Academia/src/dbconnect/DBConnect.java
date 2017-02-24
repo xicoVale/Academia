@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class DBConnect {
+public class DBConnect implements AutoCloseable{
 	private final String URL = "jdbc:mysql://localhost:3306/data";
 	private Connection conn;
 	private static int single;
@@ -35,6 +35,7 @@ public class DBConnect {
 	private void connect(){
 		try {
 			conn = DriverManager.getConnection(URL, "root", "password");
+			conn.setAutoCommit(false);
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
@@ -64,5 +65,11 @@ public class DBConnect {
 		} finally {
 			return res;
 		}
+	}
+
+	@Override
+	public void close() throws Exception {
+		conn.close();
+		single--;
 	}
 }

@@ -60,6 +60,13 @@ public class Customer extends Tables {
 		query += ")";
 		
 		conn.updateDb(INSERT + query);
+		try {
+			conn.getConnection().commit();
+		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+			System.out.println("SQLState: " + e.getSQLState());
+			System.out.println("VendorError: " + e.getErrorCode());
+		}
 	}
 	/**
 	 * Returns the customerNumber the next customer should have
@@ -79,5 +86,36 @@ public class Customer extends Tables {
 			System.out.println("VendorError: " + e.getErrorCode());
 		} 
 		return customerNumber;
+	}
+	/**
+	 * 
+	 * Checks if a customerNumber is already being used
+	 * 
+	 * @param id
+	 * @return true if the number isn't being used
+	 * @return false if the number is being used or if id isn't a number
+	 */
+	public boolean checkId(String id) {
+		if(!id.matches("(^[0-9)")) {
+			return false;
+		}
+		else {
+			String query = SELECT + id;
+			ResultSet res = conn.query(query);
+			try {
+				if(!res.next()){
+					return false;
+				}
+				else {
+					return true;
+				}
+			} catch (SQLException e) {
+				System.out.println("SQLException: " + e.getMessage());
+				System.out.println("SQLState: " + e.getSQLState());
+				System.out.println("VendorError: " + e.getErrorCode());
+			} finally {
+				return false;
+			}
+		}
 	}
 }
