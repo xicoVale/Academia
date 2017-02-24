@@ -50,22 +50,16 @@ public class OrderDetails extends Tables {
 	 * @return false if the code doesn't exist
 	 */
 	public boolean checkProductCode(String productCode) {
-		String query = "SELECT productCode FROM products WHERE productCode = " + productCode;
-		ResultSet res = conn.query(productCode);
+		String query = "SELECT productCode FROM products WHERE productCode = '" + productCode + "'";
+		ResultSet res = conn.query(query);
 		try {
-			if (!res.next()) {
-				return false;
-			}
-			else {
-				return true;
-			}
+			return (res.next());
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
 			System.out.println("VendorError: " + e.getErrorCode());
-		} finally {
 			return false;
-		}
+		} 
 	}
 	@Override
 	public void register() {
@@ -75,10 +69,12 @@ public class OrderDetails extends Tables {
 			if (attributes.indexOf(next) == 0) {
 				query += "'" + next + "'";
 			}
-			query += ", '" + next + "'";
+			else {
+				query += ", '" + next + "'";
+			}
 		}
 		query += ")";
-		conn.query(INSERT + query);
+		conn.updateDb(INSERT + query);
 		try {
 			conn.getConnection().commit();
 		} catch (SQLException e) {

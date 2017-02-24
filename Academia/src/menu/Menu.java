@@ -1,17 +1,23 @@
 package menu;
 
+import java.io.FileNotFoundException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import dbconnect.DBConnect;
 import tables.Customer;
+import tables.OrderDetails;
+import tables.Orders;
 
 public class Menu {
 
 	private DBConnect conn;
 
-	private Menu() {}
-	
+	private Menu() {
+	}
+
 	public Menu(DBConnect conn) {
 		this.setConn(conn);
 	}
@@ -46,9 +52,11 @@ public class Menu {
 				break;
 
 			case 2:
+				RegistNewOrder(input);
 				break;
 
 			case 3:
+
 				break;
 
 			case 4:
@@ -61,6 +69,7 @@ public class Menu {
 		input.close();
 	}
 
+	/** [1] Método que regista novo cliente e atualiza a Database **/
 	public void RegistNewClient(Scanner input) {
 
 		Customer newCustomer = new Customer(conn);
@@ -68,30 +77,173 @@ public class Menu {
 
 		input.nextLine();
 		System.out.print("Customer name: ");
-		attributes.add(input.nextLine());
+		attributes.add(checkNull(input, "Customer name: "));
 		System.out.print("Contact Last name: ");
-		attributes.add(input.nextLine());
+		attributes.add(checkNull(input, "Contact Last name: "));
 		System.out.print("Contact First name: ");
-		attributes.add(input.nextLine());
+		attributes.add(checkNull(input, "Contact First name: "));
 		System.out.print("Phone number: ");
-		attributes.add(input.nextLine());
+		attributes.add(checkPhone(input, "Phone number: "));
 		System.out.print("Address Line 1: ");
-		attributes.add(input.nextLine());
+		attributes.add(checkNull(input, "Address Line 1: "));
 		System.out.print("Address Line 2: ");
 		attributes.add(input.nextLine());
 		System.out.print("City: ");
-		attributes.add(input.nextLine());
+		attributes.add(checkNull(input, "City: "));
 		System.out.print("State: ");
 		attributes.add(input.nextLine());
+
 		System.out.print("Postal Code: ");
-		attributes.add(input.nextLine());
+		attributes.add(checkPostalCode(input, "Postal Code: "));
+
 		System.out.print("Country: ");
-		attributes.add(input.nextLine());
+		attributes.add(checkNull(input, "Country: "));
 		attributes.add("n/a");
 		attributes.add("n/a");
 
 		newCustomer.register();
-
+		System.out.println("Registration with success.");
 	}
 
+	/** [1.1] Método que confirma o preenchimento dos campos obrigatórios **/
+
+	private String checkNull(Scanner in, String field) {
+		String reset = in.nextLine();
+		if (reset.equalsIgnoreCase("n/a") || reset.equals("")) {
+			System.out.println("You must fill this field.");
+			System.out.print(field);
+			return checkNull(in, field);
+		} else
+			return reset;
+	}
+
+	/** [1.2] Método que confirma a validade do número de telefone **/
+	private String checkPhone(Scanner in, String field) {
+		String reset = in.nextLine();
+		if (!reset.matches("(^9[1236]{1}[0-9]{7})") && !reset.matches("(^2[0-9]{8})")) {
+			System.out.println("Invalid number.");
+			System.out.print(field);
+			return checkPhone(in, field);
+		} else
+			return reset;
+	}
+
+	/** [1.3] Método que confirma a validade do código postal **/
+	private String checkPostalCode(Scanner in, String field) {
+		String reset = in.nextLine();
+		if (!reset.matches("(^[0-9]{4}-[0-9]{3})") && !reset.equals("") && !reset.equalsIgnoreCase("n/a")) {
+			System.out.println("Invalid Postal Code.");
+			System.out.print(field);
+			return checkPostalCode(in, field);
+		} else
+			return reset;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * [2] Método que regista nova encomenda de um cliente já existente na
+	 * Database e a atualiza
+	 **/
+
+	public void RegistNewOrder(Scanner input) {
+
+		Orders newOrder = new Orders(conn);
+		ArrayList<String> attributes = newOrder.getAttributes();
+
+		OrderDetails newOrderDetails = new OrderDetails(conn);
+		ArrayList<String> attributesDetails = newOrderDetails.getAttributes();
+
+		input.nextLine();
+		System.out.print("Order date: ");
+		attributes.add(checkDateFormat(input, "Order date (AAAA-MM-DD): "));
+		System.out.print("Required date: ");
+		attributes.add(checkDateFormat(input, "Required date (AAAA-MM-DD): "));
+		System.out.print("Shipped date: ");
+		attributes.add(checkShipDateFormat(input, "Shipped date (AAAA-MM-DD): "));
+		System.out.print("Status: ");
+		attributes.add(checkNull(input, "Status: "));
+		System.out.print("Comments: ");
+		attributes.add(input.nextLine());
+		System.out.print("Customer Number: ");
+		String customerNum = checkNull(input, "Customer Number: ");
+		while (!conn.checkId(customerNum)) {
+			System.out.println("Customer Number not found.");
+			System.out.print("Customer Number: ");
+			customerNum = checkNull(input, "Customer Number: ");
+		}
+		attributes.add(customerNum);
+
+		System.out.print("Product code: ");
+		String productCode = checkNull(input, "Product code: ");
+		while (!newOrderDetails.checkProductCode(productCode)) {
+			System.out.println("Product code not found.");
+			System.out.print("Product code: ");
+			productCode = checkNull(input, "Product code: ");
+		}
+		attributesDetails.add(productCode);
+
+		System.out.print("Quantity: ");
+		attributesDetails.add(checkNull(input, "Quantity: "));
+		System.out.print("Unitary price: ");
+		attributesDetails.add(checkNull(input, "Unitary price: "));
+		System.out.print("Order line number: ");
+		attributesDetails.add(checkNull(input, "Order line number: "));
+
+		newOrder.register();
+		attributesDetails.add(0, "" + newOrder.getOrderNumber());
+		newOrderDetails.register();
+		System.out.println("Registration with success.");
+	}
+
+	/** [2.1] Método que valida o formato da orderDate e requiredDate **/
+
+	private String checkDateFormat(Scanner in, String field) {
+
+		String reset = in.nextLine();
+		try {
+			LocalDate date = LocalDate.parse(reset);
+		} catch (DateTimeParseException e) {
+			System.out.println("Invalid date");
+			System.out.print(field);
+			return checkDateFormat(in, field);
+		}
+		return reset;
+	}
+
+	/** [2.2] Método que valida o formato da shippedDate, que poder ser NULL **/
+
+	private String checkShipDateFormat(Scanner in, String field) {
+
+		String reset = in.nextLine();
+		if (!reset.equalsIgnoreCase("n/a") && !reset.equals("")) {
+			return checkDateFormat(in, field);
+		} else
+			return reset;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * [3] Método que exporta a lista de clientes registados para um ficheiro
+	 * binário
+	 **/
+
+	public void ExportListOfClients(Scanner input){
+		
+		Customer customer = new Customer(conn);
+		System.out.println("Export file path: ");
+		customer.exportCustomers(input.nextLine());
+	}
 }
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/** [4] Método que exporta a lista de clientes registados para um ficheiro binário **/
+
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/** [5] ... **/
+
+
+
+
