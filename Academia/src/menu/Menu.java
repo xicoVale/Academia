@@ -185,7 +185,7 @@ public class Menu {
 		attributesDetails.add(checkNull(input, "Order line number: "));
 
 		newOrder.register();
-		attributesDetails.add(0, newOrder.getOrderNumber());
+		attributesDetails.add(0, "" + newOrder.getOrderNumber());
 		newOrderDetails.register();
 		System.out.println("Registration with success.");
 	}
