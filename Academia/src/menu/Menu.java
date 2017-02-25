@@ -14,7 +14,7 @@ public class Menu {
 
 	private DBConnect conn;
 
-	private Menu() {
+	public Menu() {
 	}
 
 	public Menu(DBConnect conn) {
@@ -28,9 +28,10 @@ public class Menu {
 	public void setConn(DBConnect conn) {
 		this.conn = conn;
 	}
-
+	/**
+	 *	Menu start point
+	 */
 	public void selectOption() {
-
 		Scanner input = new Scanner(System.in);
 		int option;
 		{
@@ -47,7 +48,6 @@ public class Menu {
 			input.nextLine();
 
 			switch (option) {
-
 			case 1:
 				registerNewClient(input);
 				break;
@@ -61,7 +61,7 @@ public class Menu {
 				break;
 
 			case 4:
-				exportClientDetails(input);
+				exportCustomerDetails(input);
 				break;
 
 			case 5:
@@ -72,7 +72,11 @@ public class Menu {
 		input.close();
 	}
 
-	/** [1] Método que regista novo cliente e atualiza a Database **/
+	/**
+	 *  [1] Menu entry for adding a user to the database
+	 *  
+	 *  @param input - Scanner where the user input will be read from
+	 **/
 	public void registerNewClient(Scanner input) {
 		Customer newCustomer = new Customer(conn);
 		ArrayList<String> attributes = newCustomer.getAttributes();
@@ -84,7 +88,7 @@ public class Menu {
 		System.out.print("Contact First name: ");
 		attributes.add(checkNull(input, "Contact First name: "));
 		System.out.print("Phone number: ");
-		attributes.add(checkPhone(input, "Phone number: "));
+		attributes.add(validatePhone(input, "Phone number: "));
 		System.out.print("Address Line 1: ");
 		attributes.add(checkNull(input, "Address Line 1: "));
 		System.out.print("Address Line 2: ");
@@ -95,7 +99,7 @@ public class Menu {
 		attributes.add(input.nextLine());
 
 		System.out.print("Postal Code: ");
-		attributes.add(checkPostalCode(input, "Postal Code: "));
+		attributes.add(validatePostalCode(input, "Postal Code: "));
 
 		System.out.print("Country: ");
 		attributes.add(checkNull(input, "Country: "));
@@ -106,36 +110,59 @@ public class Menu {
 		System.out.println("Registration with success.");
 	}
 
-	/** [1.1] Método que confirma o preenchimento dos campos obrigatórios **/
-
-	private String checkNull(Scanner in, String field) {
+	/** 
+	 * [1.1] Verifies if a user input is empty
+	 * 
+	 * @param in - Scanner where the user input is to be read from
+	 * @param promptText - String containing the text to be prompted to the user
+	 * 
+	 * @return A String with the user provided text
+	 **/
+	private String checkNull(Scanner in, String promptText) {
 		String reset = in.nextLine();
 		if (reset.equalsIgnoreCase("n/a") || reset.equals("")) {
 			System.out.println("You must fill this field.");
-			System.out.print(field);
-			return checkNull(in, field);
+			System.out.print(promptText);
+			return checkNull(in, promptText);
 		} else
 			return reset;
 	}
 
-	/** [1.2] Método que confirma a validade do número de telefone **/
-	private String checkPhone(Scanner in, String field) {
+	/**  
+	 * [1.2] Reads a phone number from user input and verifies if it is in the correct format
+	 * 
+	 * @param in - Scanner where the phone number will be read from
+	 * @param promptText - String containing the text the user will be prompted
+	 * 
+	 * @return A String containing the phone number
+	 **/
+	private String validatePhone(Scanner in, String promptText) {
 		String reset = in.nextLine();
+		// A phone number should be in the portuguese mobile or land line phone format
 		if (!reset.matches("(^9[1236]{1}[0-9]{7})") && !reset.matches("(^2[0-9]{8})")) {
 			System.out.println("Invalid number.");
-			System.out.print(field);
-			return checkPhone(in, field);
+			System.out.print(promptText);
+			return validatePhone(in, promptText);
 		} else
 			return reset;
 	}
 
-	/** [1.3] Método que confirma a validade do código postal **/
-	private String checkPostalCode(Scanner in, String field) {
+	/** 
+	 * [1.3] Verifies that a postal code is in the proper format or is empty
+	 * 
+	 * @param in - Scanner object where the postal code will be read from
+	 * @param promptText - String containing the text to be prompted to the user 
+	 * 
+	 * @return A String containing the properly formatted postal code
+	 **/
+	private String validatePostalCode(Scanner in, String promptText) {
 		String reset = in.nextLine();
+		// The input should be in the 0000-000 format
+		// or empty
 		if (!reset.matches("(^[0-9]{4}-[0-9]{3})") && !reset.equals("") && !reset.equalsIgnoreCase("n/a")) {
 			System.out.println("Invalid Postal Code.");
-			System.out.print(field);
-			return checkPostalCode(in, field);
+			System.out.print(promptText);
+			return validatePostalCode(in, promptText);
 		} else
 			return reset;
 	}
@@ -143,8 +170,9 @@ public class Menu {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * [2] Método que regista nova encomenda de um cliente já existente na
-	 * Database e a atualiza
+	 * [2] Adds a new order to the database read from user input
+	 * 
+	 * @param input - Scanner object where the order details should be read from
 	 **/
 	public void registerNewOrder(Scanner input) {
 
@@ -156,13 +184,13 @@ public class Menu {
 
 		
 		System.out.print("Order date: ");
-		attributes.add(checkDateFormat(input, "Order date (AAAA-MM-DD): "));
+		attributes.add(validateDateFormat(input, "Order date (AAAA-MM-DD): "));
 		
 		System.out.print("Required date: ");
-		attributes.add(checkDateFormat(input, "Required date (AAAA-MM-DD): "));
+		attributes.add(validateDateFormat(input, "Required date (AAAA-MM-DD): "));
 		
 		System.out.print("Shipped date: ");
-		attributes.add(checkShipDateFormat(input, "Shipped date (AAAA-MM-DD): "));
+		attributes.add(validateShippedDateFormat(input, "Shipped date (AAAA-MM-DD): "));
 		
 		System.out.print("Status: ");
 		attributes.add(checkNull(input, "Status: "));
@@ -172,7 +200,7 @@ public class Menu {
 		
 		System.out.print("Customer Number: ");
 		String customerNum = checkNull(input, "Customer Number: ");
-		while (!conn.checkId(customerNum)) {
+		while (!conn.checkCustomerId(customerNum)) {
 			System.out.println("Customer Number not found.");
 			System.out.print("Customer Number: ");
 			customerNum = checkNull(input, "Customer Number: ");
@@ -203,32 +231,48 @@ public class Menu {
 		System.out.println("Registration with success.");
 	}
 
-	/** [2.1] Método que valida o formato da orderDate e requiredDate **/
-	private String checkDateFormat(Scanner in, String field) {
+	/** 
+	 * [2.1] Verifies if a date provided by the user is in the proper format
+	 * 
+	 * @param in - Scanner where the date should be read from
+	 * @param promptText - String containing the text to be prompted to the user
+	 *  
+	 *  @return A String containing a propper formated date
+	**/
+	private String validateDateFormat(Scanner in, String promptText) {
 		String reset = in.nextLine();
 		try {
-			LocalDate date = LocalDate.parse(reset);
+			LocalDate.parse(reset);
 		} catch (DateTimeParseException e) {
 			System.out.println("Invalid date");
-			System.out.print(field);
-			return checkDateFormat(in, field);
+			System.out.print(promptText);
+			return validateDateFormat(in, promptText);
 		}
 		return reset;
 	}
 
-	/** [2.2] Método que valida o formato da shippedDate, que poder ser NULL **/
-	private String checkShipDateFormat(Scanner in, String field) {
+	/** 
+	 * [2.2] Verifies if the shipped date provided is in a valid format or is empty 
+	 *  
+	 *  @param in - Scanner object where the date should be read from
+	 *  @param promptText - String containing the user prompt text
+	 *  
+	 *  @return A String containing the date in the proper format
+	**/
+	private String validateShippedDateFormat(Scanner in, String promptText) {
 		String reset = in.nextLine();
+		
 		if (!reset.equalsIgnoreCase("n/a") && !reset.equals("")) {
-			return checkDateFormat(in, field);
+			return validateDateFormat(in, promptText);
 		} else
 			return reset;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * [3] Método que exporta a lista de clientes registados para um ficheiro
-	 * binário
+	 * [3] Menu entry for customer table exporting
+	 * 
+	 * @param input - A Scanner object from which the name of the export file should be read
 	 **/
 	private void exportClients(Scanner input){
 		Customer customer = new Customer(conn);
@@ -239,30 +283,41 @@ public class Menu {
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * [4] Método que exporta a lista de clientes registados para um ficheiro
-	 * binário
+	 * [4] Menu entry for customer details exporting
+	 * 
+	 * @param input - A Scanner object from which the customerNumber of the customer whose details are to be exported
 	 **/
-	private void exportClientDetails(Scanner input) {		
+	private void exportCustomerDetails(Scanner input) {		
 		System.out.print("Customer id: ");
 		String in = input.nextLine();
 		
-		while(!conn.checkId(in)) {
+		// Checks if the id provided exists in the databases
+		// Will keep prompting the user until a correct id is given
+		while(!conn.checkCustomerId(in)) {
 			System.out.println("Invalid id.");
 			System.out.print("Customer id: ");
 			in = input.nextLine();
 		}
+		// Export the details<
 		Customer customer = new Customer(conn);
 		customer.exportCustomerDetails(in);
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/** [5] Import into the database from a binary file **/
+	/** 
+	 * [5] Menu entry for importing the contents of a binary file to the database
+	 * 
+	 * @param input - The Scanner object where the file's location should be read from
+	**/
 	private void importFile(Scanner input) {
+		// Get the file path from the user
 		System.out.print("File path: ");
 		String path = input.nextLine();
 		
 		try {
+			// Import the contents of the file
 			conn.importFile(path);
 		} catch (Exception e) {
+			// Handle the exceptions from badly formatted files
 			System.out.println(e.getMessage());
 			importFile(input);
 		}
