@@ -1,6 +1,5 @@
 package menu;
 
-import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -60,6 +59,7 @@ public class Menu {
 				break;
 
 			case 4:
+				exportClientDetails(input);
 				break;
 
 			case 5:
@@ -232,7 +232,7 @@ public class Menu {
 	 * [3] Método que exporta a lista de clientes registados para um ficheiro
 	 * binário
 	 **/
-	public void exportClients(Scanner input){
+	private void exportClients(Scanner input){
 		
 		input.nextLine();
 		Customer customer = new Customer(conn);
@@ -240,11 +240,28 @@ public class Menu {
 		String path = input.nextLine();
 		customer.exportCustomers(path);
 	}
-}
-
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/** [4] Método que exporta a lista de clientes registados para um ficheiro binário **/
-
+	/**
+	 * [4] Método que exporta a lista de clientes registados para um ficheiro
+	 * binário
+	 **/
+	private void exportClientDetails(Scanner input) {
+		input.nextLine();
+		
+		System.out.print("Customer id: ");
+		String in = input.nextLine();
+		
+		while(!conn.checkId(in)) {
+			System.out.println("Invalid id.");
+			System.out.print("Customer id: ");
+			in = input.nextLine();
+		}
+		Customer customer = new Customer(conn);
+		customer.exportCustomerDetails(in);
+	}
+}
+	
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
