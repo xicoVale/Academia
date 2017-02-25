@@ -260,7 +260,12 @@ public class Menu {
 		System.out.print("File path: ");
 		String path = input.nextLine();
 		
-		conn.importFile(path);
+		try {
+			conn.importFile(path);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			importFile(input);
+		}
 	}
 }
 	
