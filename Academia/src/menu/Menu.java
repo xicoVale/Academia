@@ -314,10 +314,8 @@ public class Menu {
 		String path = input.nextLine();
 		
 		try {
-			// Import the contents of the file
 			conn.importFile(path);
 		} catch (Exception e) {
-			// Handle the exceptions from badly formatted files
 			System.out.println(e.getMessage());
 			importFile(input);
 		}
