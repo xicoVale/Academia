@@ -145,7 +145,6 @@ public class Menu {
 	 * [2] Método que regista nova encomenda de um cliente já existente na
 	 * Database e a atualiza
 	 **/
-
 	public void registerNewOrder(Scanner input) {
 
 		Orders newOrder = new Orders(conn);
@@ -155,16 +154,22 @@ public class Menu {
 		ArrayList<String> attributesDetails = newOrderDetails.getAttributes();
 
 		input.nextLine();
+		
 		System.out.print("Order date: ");
 		attributes.add(checkDateFormat(input, "Order date (AAAA-MM-DD): "));
+		
 		System.out.print("Required date: ");
 		attributes.add(checkDateFormat(input, "Required date (AAAA-MM-DD): "));
+		
 		System.out.print("Shipped date: ");
 		attributes.add(checkShipDateFormat(input, "Shipped date (AAAA-MM-DD): "));
+		
 		System.out.print("Status: ");
 		attributes.add(checkNull(input, "Status: "));
+		
 		System.out.print("Comments: ");
 		attributes.add(input.nextLine());
+		
 		System.out.print("Customer Number: ");
 		String customerNum = checkNull(input, "Customer Number: ");
 		while (!conn.checkId(customerNum)) {
@@ -185,8 +190,10 @@ public class Menu {
 
 		System.out.print("Quantity: ");
 		attributesDetails.add(checkNull(input, "Quantity: "));
+		
 		System.out.print("Unitary price: ");
 		attributesDetails.add(checkNull(input, "Unitary price: "));
+		
 		System.out.print("Order line number: ");
 		attributesDetails.add(checkNull(input, "Order line number: "));
 
@@ -197,7 +204,6 @@ public class Menu {
 	}
 
 	/** [2.1] Método que valida o formato da orderDate e requiredDate **/
-
 	private String checkDateFormat(Scanner in, String field) {
 
 		String reset = in.nextLine();
@@ -212,7 +218,6 @@ public class Menu {
 	}
 
 	/** [2.2] Método que valida o formato da shippedDate, que poder ser NULL **/
-
 	private String checkShipDateFormat(Scanner in, String field) {
 
 		String reset = in.nextLine();
@@ -227,12 +232,11 @@ public class Menu {
 	 * [3] Método que exporta a lista de clientes registados para um ficheiro
 	 * binário
 	 **/
-
 	public void exportClients(Scanner input){
 		
 		input.nextLine();
 		Customer customer = new Customer(conn);
-		System.out.println("Export file path: ");
+		System.out.print("Export file path: ");
 		String path = input.nextLine();
 		customer.exportCustomers(path);
 	}
