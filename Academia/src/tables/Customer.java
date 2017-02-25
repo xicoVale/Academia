@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import dbconnect.DBConnect;
 
 public class Customer extends Tables {
-	private final int SIZE = 12;
+	private final static int SIZE = 12;
 	private ArrayList<String> attributes;
 	private DBConnect conn;
 	// The first part of the insert query
@@ -33,6 +33,9 @@ public class Customer extends Tables {
 	public int getSize() {
 		return SIZE;
 	}
+	public static int size() {
+		return SIZE;
+	}
 
 	@Override
 	public ArrayList<String> getAttributes() {
@@ -42,6 +45,9 @@ public class Customer extends Tables {
 	@Override
 	public void setAttributes() {
 		this.attributes = new ArrayList<String>(SIZE);
+	}
+	public void setAttributes(ArrayList<String> attributes) {
+		this.attributes = attributes;
 	}
 
 	public DBConnect getConn() {
@@ -55,7 +61,10 @@ public class Customer extends Tables {
 	public void register() {
 		// Will hold the values provided by user input
 		String query = "'" + getNewCustomerNumber() + "'";
-
+		registerWithId(query);
+	}
+	
+	public void registerWithId(String query) {		
 		for (String next : getAttributes()) {
 			// Converts n/a into NULL
 			if (next.equalsIgnoreCase("n/a") || next.equals("")) {
