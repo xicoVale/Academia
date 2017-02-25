@@ -110,11 +110,13 @@ public class Customer extends Tables {
 			ResultSet res = conn.query(query);
 			ResultSetMetaData rsmd = res.getMetaData();
 
-			int cols = rsmd.getColumnCount();
-			for (int col = 1; col <= cols; col++) {
-				res.next();
-				oos.writeObject(res.getString(col));
+			while (res.next()) {
+				int cols = rsmd.getColumnCount();
+				for (int col = 1; col <= cols; col++) {
+					oos.writeObject(res.getString(col));
+				}	
 			}
+			oos.close();
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
