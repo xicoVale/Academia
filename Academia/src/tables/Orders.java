@@ -10,7 +10,10 @@ public class Orders extends Tables {
 	private final int SIZE = 6;
 	private ArrayList<String> attributes;
 	private DBConnect conn;
+	// An orderNumber to be passed to orderDetails so they have the same orderNumber
+	// as the database dictates
 	private int orderNumber = 0;
+	// Data insertion query
 	private final String INSERT = "INSERT INTO orders (orderNumber, orderDate, requiredDate, shippedDate, status, comments, customerNumber) VALUES (";
 	
 	public Orders(){
@@ -18,7 +21,7 @@ public class Orders extends Tables {
 	}
 	
 	public Orders(DBConnect conn) {
-		setConn(conn);
+		setConnection(conn);
 		setAttributes();
 	}
 
@@ -37,12 +40,12 @@ public class Orders extends Tables {
 		this.attributes = new ArrayList<String>(SIZE);
 	}
 	@Override
-	public void setConn(DBConnect conn) {
+	public void setConnection(DBConnect conn) {
 		this.conn = conn;		
 	}
 
 	@Override
-	public DBConnect getConn() {
+	public DBConnect getConnection() {
 		return this.conn;
 	}
 	
@@ -71,22 +74,20 @@ public class Orders extends Tables {
 		conn.updateDb(INSERT + query);
 	}
 	/**
-	 * Returns the next order number
+	 * Returns the next available orderNumber.
 	 * 
-	 * @return
+	 * @return - The next availiable order number or 0 if an {@link SQLException} ocurrs
 	 */
 	private int getNewOrderNumber() {
-		String getNumber = "SELECT orderNumber FROM orders ORDER BY orderNumber DESC LIMIT 1";
+		String getNewOrderNumber = "SELECT orderNumber FROM orders ORDER BY orderNumber DESC LIMIT 1";
 		int newNumber = 0;
 		try {
-			ResultSet res = conn.query(getNumber);
+			ResultSet res = conn.query(getNewOrderNumber);
 			if (res.next()) {
 				newNumber = Integer.parseInt(res.getString("orderNumber")) + 1;
 			}
 		} catch (SQLException e) {
-			System.out.println("SQLException: " + e.getMessage());
-			System.out.println("SQLState: " + e.getSQLState());
-			System.out.println("VendorError: " + e.getErrorCode());
+			conn.sqlExceptionHandler(e);
 		} finally {
 			return newNumber;
 		}
