@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import exceptions.InsuficientAttributesException;
+import exceptions.InvalidCustomerIdException;
 import tables.Customer;
 
 public class DBConnect implements AutoCloseable{
@@ -114,10 +116,10 @@ public class DBConnect implements AutoCloseable{
 	/**
 	 * Imports the contents of a binary file into the database.
 	 * 
-	 * @param path - A {@link String} with the path of the file to be imported
+	 * @param path - String containing the path of the file to be imported
 	 * @throws Exception 
 	 */
-	public void importFile(String path) throws Exception{
+	public void importFile(String path) throws InvalidCustomerIdException, InsuficientAttributesException{
 		try (ObjectInputStream file = new ObjectInputStream(new FileInputStream(path))) {
 			
 			ArrayList<String> attributes = new ArrayList<String>();
@@ -127,9 +129,9 @@ public class DBConnect implements AutoCloseable{
 				attributes.add(line);
 				line = (String) file.readObject();
 			}
-			System.out.println(attributes.toString());
-			if (attributes.size() != Customer.size()) {
-				throw new Exception("File does not contain enough fields.");
+
+			if (attributes.size() < Customer.size()) {
+				throw new InsuficientAttributesException();
 			}
 			
 			if(checkCustomerId(attributes.get(0))) {
@@ -137,15 +139,33 @@ public class DBConnect implements AutoCloseable{
 				customer.setAttributes(attributes);
 				customer.registerWithId("'" + attributes.remove(0) + "'");
 			}
+			else {
+				throw new InvalidCustomerIdException();
+			}
+			
 			
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 	/**
+	 * Adds the missing null values to the attributes list
+	 * 
+	 * @param attributes
+	 * @return The updated ArrayList
+	 */
+	private ArrayList<String> addNulls(ArrayList<String> attributes) {
+		attributes.add(6, "");
+		attributes.add(8, "");
+		attributes.add(9, "");
+		attributes.add(10, "");
+		attributes.add(12, "");
+		return attributes;
+	}
+	/**
 	 * Handles SQLExeptions by printing error messages and codes
 	 * 
-	 * @param e - An {@link SQLException} to be handled
+	 * @param e - SQLException to be handled
 	 */
 	public void sqlExceptionHandler(SQLException e) {
 		System.out.println("SQLException: " + e.getMessage());
