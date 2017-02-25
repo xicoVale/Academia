@@ -42,7 +42,9 @@ public class Menu {
 			System.out.println("[4] Export the orders of a client to a text file");
 			System.out.println("[5] Import file to Database (binary file)");
 
+			System.out.print("> ");
 			option = input.nextInt();
+			input.nextLine();
 
 			switch (option) {
 
@@ -63,6 +65,7 @@ public class Menu {
 				break;
 
 			case 5:
+				importFile(input);
 				break;
 			}
 		}
@@ -71,11 +74,9 @@ public class Menu {
 
 	/** [1] Método que regista novo cliente e atualiza a Database **/
 	public void registerNewClient(Scanner input) {
-
 		Customer newCustomer = new Customer(conn);
 		ArrayList<String> attributes = newCustomer.getAttributes();
 
-		input.nextLine();
 		System.out.print("Customer name: ");
 		attributes.add(checkNull(input, "Customer name: "));
 		System.out.print("Contact Last name: ");
@@ -153,7 +154,6 @@ public class Menu {
 		OrderDetails newOrderDetails = new OrderDetails(conn);
 		ArrayList<String> attributesDetails = newOrderDetails.getAttributes();
 
-		input.nextLine();
 		
 		System.out.print("Order date: ");
 		attributes.add(checkDateFormat(input, "Order date (AAAA-MM-DD): "));
@@ -205,7 +205,6 @@ public class Menu {
 
 	/** [2.1] Método que valida o formato da orderDate e requiredDate **/
 	private String checkDateFormat(Scanner in, String field) {
-
 		String reset = in.nextLine();
 		try {
 			LocalDate date = LocalDate.parse(reset);
@@ -219,7 +218,6 @@ public class Menu {
 
 	/** [2.2] Método que valida o formato da shippedDate, que poder ser NULL **/
 	private String checkShipDateFormat(Scanner in, String field) {
-
 		String reset = in.nextLine();
 		if (!reset.equalsIgnoreCase("n/a") && !reset.equals("")) {
 			return checkDateFormat(in, field);
@@ -233,8 +231,6 @@ public class Menu {
 	 * binário
 	 **/
 	private void exportClients(Scanner input){
-		
-		input.nextLine();
 		Customer customer = new Customer(conn);
 		System.out.print("Export file path: ");
 		String path = input.nextLine();
@@ -246,9 +242,7 @@ public class Menu {
 	 * [4] Método que exporta a lista de clientes registados para um ficheiro
 	 * binário
 	 **/
-	private void exportClientDetails(Scanner input) {
-		input.nextLine();
-		
+	private void exportClientDetails(Scanner input) {		
 		System.out.print("Customer id: ");
 		String in = input.nextLine();
 		
@@ -260,12 +254,19 @@ public class Menu {
 		Customer customer = new Customer(conn);
 		customer.exportCustomerDetails(in);
 	}
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/** [5] Import into the database from a binary file **/
+	private void importFile(Scanner input) {
+		System.out.print("File path: ");
+		String path = input.nextLine();
+		
+		conn.importFile(path);
+	}
 }
 	
 
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/** [5] ... **/
+	
 
 
 
