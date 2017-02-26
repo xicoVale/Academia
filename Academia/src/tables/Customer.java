@@ -125,17 +125,7 @@ public class Customer extends Tables {
 		// Open a FileOutputStream to write the file
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path))) {
 			ResultSet res = conn.query(query);
-			
-			// Get the number of columns from the query result
 			ResultSetMetaData rsmd = res.getMetaData();
-<<<<<<< HEAD
-
-			while (res.next()) {
-				int cols = rsmd.getColumnCount();
-				for (int col = 1; col <= cols; col++) {
-					oos.writeObject(res.getString(col));
-				}	
-=======
 			int cols = rsmd.getColumnCount();
 			
 			// Iterate over the query results and write them to the file
@@ -148,13 +138,8 @@ public class Customer extends Tables {
 					}
 					oos.writeObject(value);
 				}
->>>>>>> refs/remotes/origin/import_from_file
 			}
-<<<<<<< HEAD
 			oos.close();
-=======
-			
->>>>>>> refs/remotes/origin/import_from_file
 		} catch (SQLException e) {
 			conn.sqlExceptionHandler(e);
 		} catch (IOException e) {
