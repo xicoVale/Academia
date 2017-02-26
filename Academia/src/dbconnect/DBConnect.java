@@ -1,6 +1,8 @@
 package dbconnect;
 
+import java.io.EOFException;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.Connection;
@@ -62,15 +64,12 @@ public class DBConnect implements AutoCloseable{
 	/**
 	 * Updates database table with the provided query.
 	 * 
-	 * @param query - A {@link String} with the update query
+	 * @param query - String with the update query
+	 * @throws SQLException 
 	 */
-	public void updateDb(String query){
-		try {
-			Statement st = conn.createStatement();
-			st.executeUpdate(query);	
-		} catch (SQLException e) {
-			sqlExceptionHandler(e);
-		} 
+	public void updateDb(String query) throws SQLException{
+		Statement st = conn.createStatement();
+		st.executeUpdate(query);	 
 	}
 	/**
 	 * Queries the data base. Returns a {@link ResultSet} containing the result
@@ -98,7 +97,7 @@ public class DBConnect implements AutoCloseable{
 	 * @return true if the number isn't being used
 	 * @return false if the number is being used or if id isn't a number
 	 */
-	public boolean checkCustomerId(String id) {
+	public boolean checkCustomerId(String id) throws InvalidCustomerIdException {
 		if(!id.matches("(^[0-9]{1,3})")) {
 			return false;
 		}
@@ -106,7 +105,12 @@ public class DBConnect implements AutoCloseable{
 			String query = "SELECT customerNumber FROM customers WHERE customerNumber = " + id;
 			ResultSet res = query(query);
 			try {
-				return (!res.next());
+				if (!res.next()) {
+					return true;
+				}
+				else {
+					throw new InvalidCustomerIdException();
+				}
 			} catch (SQLException e) {
 				sqlExceptionHandler(e);
 				return false;
@@ -117,50 +121,34 @@ public class DBConnect implements AutoCloseable{
 	 * Imports the contents of a binary file into the database.
 	 * 
 	 * @param path - String containing the path of the file to be imported
-	 * @throws Exception 
+	 * @throws InvalidCustomerIdException 
+	 * @throws InsuficientAttributesException 
 	 */
-	public void importFile(String path) throws InvalidCustomerIdException, InsuficientAttributesException{
-		try (ObjectInputStream file = new ObjectInputStream(new FileInputStream(path))) {
-			
-			ArrayList<String> attributes = new ArrayList<String>();
-			String line = (String) file.readObject();
-			
-			while(line != null) {
+	public void importFile(String path) throws InsuficientAttributesException, InvalidCustomerIdException, IOException{
+		ArrayList<String> attributes = new ArrayList<String>();
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path))) {
+			for(int i = 0; i < Customer.size(); i++) {
+				String line = (String) ois.readObject();
 				attributes.add(line);
-				line = (String) file.readObject();
 			}
-
-			if (attributes.size() < Customer.size()) {
-				throw new InsuficientAttributesException();
-			}
-			
-			if(checkCustomerId(attributes.get(0))) {
-				Customer customer = new Customer(this);
-				customer.setAttributes(attributes);
-				customer.registerWithId("'" + attributes.remove(0) + "'");
-			}
-			else {
-				throw new InvalidCustomerIdException();
-			}
-			
-			
-		} catch (IOException | ClassNotFoundException e) {
+			System.out.println(attributes.toString());
+			processImport(attributes);
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+		} catch (EOFException e) {
+			processImport(attributes);
 		}
 	}
-	/**
-	 * Adds the missing null values to the attributes list
-	 * 
-	 * @param attributes
-	 * @return The updated ArrayList
-	 */
-	private ArrayList<String> addNulls(ArrayList<String> attributes) {
-		attributes.add(6, "");
-		attributes.add(8, "");
-		attributes.add(9, "");
-		attributes.add(10, "");
-		attributes.add(12, "");
-		return attributes;
+	private void processImport(ArrayList<String> attributes) throws InsuficientAttributesException, InvalidCustomerIdException {
+		while (attributes.size() < Customer.size() + 1) {
+			attributes.add("");
+		}
+		
+		if(checkCustomerId(attributes.get(0))) {
+			Customer customer = new Customer(this);
+			customer.setAttributes(attributes);
+			customer.registerWithId("'" + attributes.remove(0) + "'");
+		}
 	}
 	/**
 	 * Handles SQLExeptions by printing error messages and codes
