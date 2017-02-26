@@ -139,6 +139,14 @@ public class DBConnect implements AutoCloseable{
 			processImport(attributes);
 		}
 	}
+	/**
+	 * Process the input read from a binary file and calls the methods that will add
+	 * the information to the database
+	 * 
+	 * @param attributes - ArrayList containing the information read
+	 * @throws InsuficientAttributesException
+	 * @throws InvalidCustomerIdException
+	 */
 	private void processImport(ArrayList<String> attributes) throws InsuficientAttributesException, InvalidCustomerIdException {
 		while (attributes.size() < Customer.size() + 1) {
 			attributes.add("");
