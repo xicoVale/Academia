@@ -1,4 +1,8 @@
 /bin/
 /mysql-connector-java-5.1.40-bin.jar
+<<<<<<< HEAD
 /*.txt
+=======
+/export.txt
+>>>>>>> refs/remotes/origin/import_from_file
 /*.bin

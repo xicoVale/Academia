@@ -10,13 +10,14 @@ public class OrderDetails extends Tables {
 	private final int SIZE = 5;
 	private ArrayList<String> attributes;
 	private DBConnect conn;
+	// Insert string
 	private final String INSERT = "INSERT INTO orderDetails (orderNumber, productCode, quantityOrdered, priceEach, orderLineNumber) VALUES (";
 	
 	public OrderDetails(){
 		setAttributes();
 	}
 	public OrderDetails(DBConnect conn) {
-		setConn(conn);
+		setConnection(conn);
 		setAttributes();
 	}
 	
@@ -34,33 +35,34 @@ public class OrderDetails extends Tables {
 	}
 
 	@Override
-	public void setConn(DBConnect conn) {
+	public void setConnection(DBConnect conn) {
 		this.conn = conn;
 	}
 
 	@Override
-	public DBConnect getConn() {
+	public DBConnect getConnection() {
 		return conn;
 	}
 	/**
-	 * Checks weather a productCode exists in the database
+	 * Checks weather a productCode already exists in the database
 	 * 
-	 * @param productCode
-	 * @return true if the code exists
-	 * @return false if the code doesn't exist
+	 * @param productCode - A {@link String} containing the product code to be checked
+	 * @return - <code>true</code> if the code is available to be used
+	 * @return - <code>false</code> if the code isn't available to be used
 	 */
 	public boolean checkProductCode(String productCode) {
 		String query = "SELECT productCode FROM products WHERE productCode = '" + productCode + "'";
 		ResultSet res = conn.query(query);
 		try {
-			return (res.next());
+			return (!res.next());
 		} catch (SQLException e) {
-			System.out.println("SQLException: " + e.getMessage());
-			System.out.println("SQLState: " + e.getSQLState());
-			System.out.println("VendorError: " + e.getErrorCode());
+			conn.sqlExceptionHandler(e);
 			return false;
 		} 
 	}
+	/**
+	 * Adds a new entry into the orderDetails table of the database.
+	 */
 	@Override
 	public void register() {
 		String query = "";
@@ -74,13 +76,11 @@ public class OrderDetails extends Tables {
 			}
 		}
 		query += ")";
-		conn.updateDb(INSERT + query);
 		try {
+			conn.updateDb(INSERT + query);
 			conn.getConnection().commit();
 		} catch (SQLException e) {
-			System.out.println("SQLException: " + e.getMessage());
-			System.out.println("SQLState: " + e.getSQLState());
-			System.out.println("VendorError: " + e.getErrorCode());
+			conn.sqlExceptionHandler(e);
 		}
 	}
 	
