@@ -76,8 +76,8 @@ public class OrderDetails extends Tables {
 			}
 		}
 		query += ")";
-		conn.updateDb(INSERT + query);
 		try {
+			conn.updateDb(INSERT + query);
 			conn.getConnection().commit();
 		} catch (SQLException e) {
 			conn.sqlExceptionHandler(e);

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import org.omg.CORBA.COMM_FAILURE;
 
 import dbconnect.DBConnect;
+import exceptions.InvalidCustomerIdException;
 
 public class Customer extends Tables {
 	private final static int SIZE = 12;
@@ -69,7 +70,7 @@ public class Customer extends Tables {
 	}
 	/**
 	 * Adds a new customer to the customers table using a customerNumber provided
-	 * @param query - A {@link String} containing the customerNumber to be used
+	 * @param query - String containing the customerNumber to be used
 	 */
 	public void registerWithId(String query) {
 		// Iterate through the attributes to be added to the table
@@ -82,9 +83,9 @@ public class Customer extends Tables {
 			}
 		}
 		query += ")";
-		// Update the database
-		conn.updateDb(INSERT + query);
 		try {
+			// Update the database
+			conn.updateDb(INSERT + query);
 			conn.getConnection().commit();
 		} catch (SQLException e) {
 			conn.sqlExceptionHandler(e);
@@ -130,17 +131,57 @@ public class Customer extends Tables {
 			int cols = rsmd.getColumnCount();
 			
 			// Iterate over the query results and write them to the file
-			for (int col = 1; col <= cols; col++) {
-				res.next();
-				oos.writeObject(res.getString(col));
+			while(res.next()) {
+				for (int col = 1; col <= cols; col++) {
+					String value = res.getString(col);
+					// Converts null fields into empty strings
+					if (value == null) {
+						value = new String("");
+					}
+					oos.writeObject(value);
+				}
 			}
+			
 		} catch (SQLException e) {
 			conn.sqlExceptionHandler(e);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Exports a single customer's information to a binary file named after the customer's id
+	 * 
+	 * @param customerId - String containing the id of the customer to be exported
+	 * @throws InvalidCustomerIdException - Thrown if the query doesn't return any results 
+	 */
+	public void exportCustomer(String customerId) throws InvalidCustomerIdException{
+		String query = "SELECT * FROM customers WHERE customerNumber = " + customerId;
+		
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(customerId + ".bin"))) {
+			ResultSet res = conn.query(query);
+			
+			if(!res.next()){
+				throw new InvalidCustomerIdException();
+			}
+			else {
+				ResultSetMetaData rsmd = res.getMetaData();
+				int cols = rsmd.getColumnCount();
+				
+				for (int col = 1; col < cols; col++) {
+					String value = res.getString(col);
+					if (value == null) {
+						value = "";
+					}
+					oos.writeObject(value);
+				}
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			conn.sqlExceptionHandler(e);
+		}
+	}
 	/**
 	 * Exports a customers order history to a file named after his customerNumber
 	 */

@@ -71,7 +71,11 @@ public class Orders extends Tables {
 		}
 		query += ")";
 		
-		conn.updateDb(INSERT + query);
+		try {
+			conn.updateDb(INSERT + query);
+		} catch (SQLException e) {
+			conn.sqlExceptionHandler(e);
+		}
 	}
 	/**
 	 * Returns the next available orderNumber.
