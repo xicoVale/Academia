@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import dbconnect.DBConnect;
+import exceptions.InvalidCustomerIdException;
 import tables.Customer;
 import tables.OrderDetails;
 import tables.Orders;
@@ -67,7 +68,12 @@ public class Menu {
 			case 5:
 				importFile(input);
 				break;
+				
+			case 6:
+				exportCustomer(input);
+				break;
 			}
+			selectOption();
 		}
 		input.close();
 	}
@@ -199,12 +205,7 @@ public class Menu {
 		attributes.add(input.nextLine());
 		
 		System.out.print("Customer Number: ");
-		String customerNum = checkNull(input, "Customer Number: ");
-		while (!conn.checkCustomerId(customerNum)) {
-			System.out.println("Customer Number not found.");
-			System.out.print("Customer Number: ");
-			customerNum = checkNull(input, "Customer Number: ");
-		}
+		String customerNum = validateCustomerId(input, "Customer Number: ");
 		attributes.add(customerNum);
 
 		System.out.print("Product code: ");
@@ -229,6 +230,25 @@ public class Menu {
 		attributesDetails.add(0, "" + newOrder.getOrderNumber());
 		newOrderDetails.register();
 		System.out.println("Registration with success.");
+	}
+	/**
+	 * Verifies if a customerNumber provided by the user is already being used
+	 * in the database
+	 * 
+	 * @param in - Scanner where the customerNumber should be read from
+	 * @param promptText - String containing the text to be prompted to the user
+	 * @return customerNum - String containing a validated customer number
+	 */
+	private String validateCustomerId(Scanner in, String promptText) {
+		String customerNum = checkNull(in, promptText);
+		
+		try {
+			conn.checkCustomerId(customerNum);
+			return customerNum;
+		} catch (InvalidCustomerIdException e) {
+			System.out.println(e.getMessage());
+			return validateCustomerId(in, promptText);
+		}
 	}
 
 	/** 
@@ -290,17 +310,17 @@ public class Menu {
 	private void exportCustomerDetails(Scanner input) {		
 		System.out.print("Customer id: ");
 		String in = input.nextLine();
-		
 		// Checks if the id provided exists in the databases
 		// Will keep prompting the user until a correct id is given
-		while(!conn.checkCustomerId(in)) {
-			System.out.println("Invalid id.");
-			System.out.print("Customer id: ");
-			in = input.nextLine();
+		try {
+			conn.checkCustomerId(in);
+			// Export the details<
+			Customer customer = new Customer(conn);
+			customer.exportCustomerDetails(in);
+		} catch (InvalidCustomerIdException e) {
+			System.out.println(e.getMessage());
+			exportCustomerDetails(input);
 		}
-		// Export the details<
-		Customer customer = new Customer(conn);
-		customer.exportCustomerDetails(in);
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/** 
@@ -315,9 +335,28 @@ public class Menu {
 		
 		try {
 			conn.importFile(path);
+			System.out.println("File sucessfully imported.");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			importFile(input);
+		}
+	}
+	/**
+	 * Hidden option 6. Exports a customer's information from the customers table
+	 * to a binary file named after the customer's number
+	 * 
+	 * @param input
+	 */
+	private void exportCustomer(Scanner input) {
+		System.out.print("> ");
+		String customerId = input.nextLine();
+		
+		try {
+			Customer customer = new Customer(conn);
+			customer.exportCustomer(customerId);
+		} catch (InvalidCustomerIdException e ) {
+			System.out.println(e.getMessage());
+			exportCustomer(input);
 		}
 	}
 }
