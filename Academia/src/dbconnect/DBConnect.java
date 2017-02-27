@@ -32,10 +32,10 @@ public class DBConnect implements AutoCloseable{
 		single = 0;
 	}
 	/**
-	 * The {@link DBConnect} singleton method.
+	 * The DBConnect singleton method.
 	 * 
-	 * @return - A {@link DBConnect} object
-	 * @throws Exception - An {@link Exception} is thrown if a connection already exists
+	 * @return - A DBConnect object
+	 * @throws Exception - An Exception is thrown if a connection already exists
 	 */
 	public static DBConnect newDBC() throws Exception{
 		if (single == 0){
@@ -72,11 +72,11 @@ public class DBConnect implements AutoCloseable{
 		st.executeUpdate(query);	 
 	}
 	/**
-	 * Queries the data base. Returns a {@link ResultSet} containing the result
-	 * of the query or null if a {@link SQLException} occurs. 
+	 * Queries the data base. Returns a ResultSet containing the result
+	 * of the query or null if a SQLException occurs. 
 	 * 
-	 * @param query - A {@link String} containing the query
-	 * @return - A {@link ResultSet} containing the results of the query  
+	 * @param query - String containing the query
+	 * @return - ResultSet containing the results of the query  
 	 */
 	public ResultSet query(String query) {
 		ResultSet res = null;
@@ -95,7 +95,8 @@ public class DBConnect implements AutoCloseable{
 	 * 
 	 * @param id
 	 * @return true if the number isn't being used
-	 * @return false if the number is being used or if id isn't a number
+	 * @return false if the contents of id aren't a 1 to 3 digit number
+	 * @throws InvalidCustomerIdException - Thrown when the contents of id do not match any customerNumber in the database
 	 */
 	public boolean checkCustomerId(String id) throws InvalidCustomerIdException {
 		if(!id.matches("(^[0-9]{1,3})")) {
@@ -144,10 +145,9 @@ public class DBConnect implements AutoCloseable{
 	 * the information to the database
 	 * 
 	 * @param attributes - ArrayList containing the information read
-	 * @throws InsuficientAttributesException
-	 * @throws InvalidCustomerIdException
+	 * @throws InvalidCustomerIdException - This exception will be thrown when the user inputs an invalid customerNumber
 	 */
-	private void processImport(ArrayList<String> attributes) throws InsuficientAttributesException, InvalidCustomerIdException {
+	private void processImport(ArrayList<String> attributes) throws InvalidCustomerIdException {
 		while (attributes.size() < Customer.size() + 1) {
 			attributes.add("");
 		}
@@ -168,7 +168,11 @@ public class DBConnect implements AutoCloseable{
 		System.out.println("SQLState: " + e.getSQLState());
 		System.out.println("VendorError: " + e.getErrorCode());
 	}
-
+	/*
+	 * Closes the connection and decrements the singleton counter
+	 * (non-Javadoc)
+	 * @see java.lang.AutoCloseable#close()
+	 */
 	@Override
 	public void close() throws Exception {
 		conn.close();
