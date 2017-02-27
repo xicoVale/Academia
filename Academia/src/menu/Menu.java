@@ -266,7 +266,7 @@ public class Menu {
 	 * @param in - Scanner where the date should be read from
 	 * @param promptText - String containing the text to be prompted to the user
 	 *  
-	 *  @return A String containing a propper formated date
+	 *  @return A String containing a proper formated date
 	**/
 	private String validateDateFormat(Scanner in, String promptText) {
 		String reset = in.nextLine();
