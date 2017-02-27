@@ -80,7 +80,7 @@ public class Orders extends Tables {
 	/**
 	 * Returns the next available orderNumber.
 	 * 
-	 * @return - The next availiable order number or 0 if an {@link SQLException} ocurrs
+	 * @return - The next available order number or 0 if an {@link SQLException} occurs
 	 */
 	private int getNewOrderNumber() {
 		String getNewOrderNumber = "SELECT orderNumber FROM orders ORDER BY orderNumber DESC LIMIT 1";
