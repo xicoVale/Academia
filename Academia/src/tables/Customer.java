@@ -116,7 +116,7 @@ public class Customer extends Tables {
 	/**
 	 * Exports the customers table to a file.
 	 * 
-	 * @param path - A {@link String} containing the path to the export file
+	 * @param path - A String containing the path to the export file
 	 */
 	public void exportCustomers(String path) {
 		// A query that returns the entirety of the customers table
@@ -202,7 +202,7 @@ public class Customer extends Tables {
 	/**
 	 * Creates a formatted header for writing
 	 *
-	 * @return - A {@link String} containing a formatted header
+	 * @return - A String containing a formatted header
 	 */
 	private String writeHeader(ResultSet res) {
 		StringBuilder header = new StringBuilder();
@@ -253,8 +253,8 @@ public class Customer extends Tables {
 	/**
 	 * Formats the body of the table for writing
 	 * 
-	 * @param res - A {@link ResultSet} containing the contents of the table to be formatted
-	 * @return - A {@link String} containing the formatted table
+	 * @param res - A ResultSet containing the contents of the table to be formatted
+	 * @return - A String containing the formatted table
 	 */
 	private String formatTable(ResultSet res) {
 		try {
