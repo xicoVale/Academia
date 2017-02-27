@@ -118,7 +118,7 @@ public class Menu {
 		attributes.add("n/a");
 
 		newCustomer.register();
-		System.out.println("Registration with success.");
+		System.out.println("Customer registered sucessfully.");
 	}
 
 	/** 
@@ -240,7 +240,7 @@ public class Menu {
 		newOrder.register();
 		attributesDetails.add(0, "" + newOrder.getOrderNumber());
 		newOrderDetails.register();
-		System.out.println("Registration with success.");
+		System.out.println("Order logged sucesfully.");
 	}
 	/**
 	 * Verifies if a customerNumber provided by the user is already being used
@@ -310,6 +310,7 @@ public class Menu {
 		System.out.print("Export file path: ");
 		String path = input.nextLine();
 		customer.exportCustomers(path);
+		System.out.println("Clients exported to " + path);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -321,13 +322,14 @@ public class Menu {
 	 **/
 	private void exportCustomerDetails(Scanner input) throws InvalidCustomerIdException {		
 		System.out.print("Customer id: ");
-		String in = input.nextLine();
+		String customerId = input.nextLine();
 		// Checks if the id provided exists in the databases
 		// Will keep prompting the user until a correct id is given
-		if (!conn.checkCustomerId(in)){
+		if (!conn.checkCustomerId(customerId)){
 			// Export the details
 			Customer customer = new Customer(conn);
-			customer.exportCustomerDetails(in);
+			customer.exportCustomerDetails(customerId);
+			System.out.println("Customer " + customerId + "details exported to " + customerId + ".txt");
 		}
 		else {
 			throw new InvalidCustomerIdException();
@@ -365,6 +367,7 @@ public class Menu {
 		try {
 			Customer customer = new Customer(conn);
 			customer.exportCustomer(customerId);
+			System.out.println("Customer " + customerId + "'s details exported to " + customerId + ".bin");
 		} catch (InvalidCustomerIdException e ) {
 			System.out.println(e.getMessage());
 			exportCustomer(input);
