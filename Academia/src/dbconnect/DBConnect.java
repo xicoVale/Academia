@@ -95,10 +95,10 @@ public class DBConnect implements AutoCloseable{
 	 * 
 	 * @param id
 	 * @return true if the number isn't being used
-	 * @return false if the contents of id aren't a 1 to 3 digit number
-	 * @throws InvalidCustomerIdException - Thrown when the contents of id do not match any customerNumber in the database
+	 * @return false if the contents of id aren't a 1 to 3 digit number or id does not match any customerNumber in the database
+	 * @throws InvalidCustomerIdException - Thrown when the contents of id does not match any customerNumber in the database
 	 */
-	public boolean checkCustomerId(String id) throws InvalidCustomerIdException {
+	public boolean checkCustomerId(String id) {
 		if(!id.matches("(^[0-9]{1,3})")) {
 			return false;
 		}
@@ -110,7 +110,7 @@ public class DBConnect implements AutoCloseable{
 					return true;
 				}
 				else {
-					throw new InvalidCustomerIdException();
+					return false;
 				}
 			} catch (SQLException e) {
 				sqlExceptionHandler(e);

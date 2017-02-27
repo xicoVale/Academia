@@ -62,7 +62,12 @@ public class Menu {
 				break;
 
 			case 4:
-				exportCustomerDetails(input);
+				try {
+					exportCustomerDetails(input);
+				} catch (InvalidCustomerIdException e) {
+					System.out.println(e.getMessage());
+					selectOption();
+				}
 				break;
 
 			case 5:
@@ -205,8 +210,14 @@ public class Menu {
 		attributes.add(input.nextLine());
 		
 		System.out.print("Customer Number: ");
-		String customerNum = validateCustomerId(input, "Customer Number: ");
-		attributes.add(customerNum);
+		String customerNum;
+		try {
+			customerNum = validateCustomerId(input, "Customer Number: ");
+			attributes.add(customerNum);
+		} catch (InvalidCustomerIdException e) {
+			System.out.println(e.getMessage());
+			registerNewOrder(input);
+		}
 
 		System.out.print("Product code: ");
 		String productCode = checkNull(input, "Product code: ");
@@ -238,16 +249,16 @@ public class Menu {
 	 * @param in - Scanner where the customerNumber should be read from
 	 * @param promptText - String containing the text to be prompted to the user
 	 * @return customerNum - String containing a validated customer number
+	 * @throws InvalidCustomerIdException 
 	 */
-	private String validateCustomerId(Scanner in, String promptText) {
+	private String validateCustomerId(Scanner in, String promptText) throws InvalidCustomerIdException {
 		String customerNum = checkNull(in, promptText);
 		
-		try {
-			conn.checkCustomerId(customerNum);
+		if(!conn.checkCustomerId(customerNum)) {
 			return customerNum;
-		} catch (InvalidCustomerIdException e) {
-			System.out.println(e.getMessage());
-			return validateCustomerId(in, promptText);
+		}
+		else {
+			throw new InvalidCustomerIdException();
 		}
 	}
 
@@ -306,20 +317,20 @@ public class Menu {
 	 * [4] Menu entry for customer details exporting
 	 * 
 	 * @param input - A Scanner object from which the customerNumber of the customer whose details are to be exported
+	 * @throws InvalidCustomerIdException 
 	 **/
-	private void exportCustomerDetails(Scanner input) {		
+	private void exportCustomerDetails(Scanner input) throws InvalidCustomerIdException {		
 		System.out.print("Customer id: ");
 		String in = input.nextLine();
 		// Checks if the id provided exists in the databases
 		// Will keep prompting the user until a correct id is given
-		try {
-			conn.checkCustomerId(in);
-			// Export the details<
+		if (!conn.checkCustomerId(in)){
+			// Export the details
 			Customer customer = new Customer(conn);
 			customer.exportCustomerDetails(in);
-		} catch (InvalidCustomerIdException e) {
-			System.out.println(e.getMessage());
-			exportCustomerDetails(input);
+		}
+		else {
+			throw new InvalidCustomerIdException();
 		}
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
