@@ -35,51 +35,49 @@ public class Menu {
 	public void selectOption() {
 		Scanner input = new Scanner(System.in);
 		int option;
-		{
-			System.out.println("   Please select an option:");
-			System.out.println("-------------------------------");
-			System.out.println("[1] New client registration");
-			System.out.println("[2] New order");
-			System.out.println("[3] Export the list of clients to a file");
-			System.out.println("[4] Export the orders of a client to a text file");
-			System.out.println("[5] Import file to Database (binary file)");
+		System.out.println("   Please select an option:");
+		System.out.println("-------------------------------");
+		System.out.println("[1] New client registration");
+		System.out.println("[2] New order");
+		System.out.println("[3] Export the list of clients to a file");
+		System.out.println("[4] Export the orders of a client to a text file");
+		System.out.println("[5] Import file to Database (binary file)");
 
-			System.out.print("> ");
-			option = input.nextInt();
-			input.nextLine();
+		System.out.print("> ");
+		option = input.nextInt();
+		input.nextLine();
 
-			switch (option) {
-			case 1:
-				registerNewClient(input);
-				break;
+		switch (option) {
+		case 1:
+			registerNewClient(input);
+			break;
 
-			case 2:
-				registerNewOrder(input);
-				break;
+		case 2:
+			registerNewOrder(input);
+			break;
 
-			case 3:
-				exportClients(input);
-				break;
+		case 3:
+			exportClients(input);
+			break;
 
-			case 4:
-				try {
-					exportCustomerDetails(input);
-				} catch (InvalidCustomerIdException e) {
-					System.out.println(e.getMessage());
-					selectOption();
-				}
-				break;
-
-			case 5:
-				importFile(input);
-				break;
-				
-			case 6:
-				exportCustomer(input);
-				break;
+		case 4:
+			try {
+				exportCustomerDetails(input);
+			} catch (InvalidCustomerIdException e) {
+				System.out.println(e.getMessage());
+				selectOption();
 			}
-			selectOption();
+			break;
+
+		case 5:
+			importFile(input);
+			break;
+			
+		case 6:
+			exportCustomer(input);
+			break;
 		}
+		selectOption();
 		input.close();
 	}
 

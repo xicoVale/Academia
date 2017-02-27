@@ -10,8 +10,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import org.omg.CORBA.COMM_FAILURE;
-
 import dbconnect.DBConnect;
 import exceptions.InvalidCustomerIdException;
 
