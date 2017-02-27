@@ -51,6 +51,9 @@ public class DBConnect implements AutoCloseable{
 	private void connect(){
 		try {
 			conn = DriverManager.getConnection(URL, "root", "password");
+			// AutoCommit is set to false because of order updates
+			// Since two tables are involved the database must only change if both
+			// Updates are correct
 			conn.setAutoCommit(false);
 		} catch (SQLException e) {
 			sqlExceptionHandler(e);
