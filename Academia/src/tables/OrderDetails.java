@@ -46,7 +46,7 @@ public class OrderDetails extends Tables {
 	/**
 	 * Checks weather a productCode already exists in the database
 	 * 
-	 * @param productCode - A {@link String} containing the product code to be checked
+	 * @param productCode - String containing the product code to be checked
 	 * @return - <code>true</code> if the code is available to be used
 	 * @return - <code>false</code> if the code isn't available to be used
 	 */
