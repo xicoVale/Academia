@@ -107,11 +107,13 @@ public class DBConnect implements AutoCloseable{
 			String query = "SELECT customerNumber FROM customers WHERE customerNumber = " + id;
 			ResultSet res = query(query);
 			try {
-				if (!res.next()) {
-					return true;
-				}
-				else {
+				// CustomerNumber is being used in the database
+				if (res.next()) {
 					return false;
+				}
+				// CustomerNumber isn't being used in the database
+				else {
+					return true;
 				}
 			} catch (SQLException e) {
 				sqlExceptionHandler(e);
