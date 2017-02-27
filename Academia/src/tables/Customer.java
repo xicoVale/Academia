@@ -182,6 +182,8 @@ public class Customer extends Tables {
 	}
 	/**
 	 * Exports a customers order history to a file named after his customerNumber
+	 * 
+	 * @param id - String containing a customer's customerNumber
 	 */
 	public void exportCustomerDetails(String id) {
 		String orderQuery = "SELECT * FROM orders "
@@ -271,7 +273,7 @@ public class Customer extends Tables {
 						row.append(String.format("| %s", colValue));
 					}
 					else {
-						// Calculate how many spaces should be should be added to either side of the table contens 
+						// Calculate how many spaces should be should be added to either side of the table contents 
 						int valueSize = colValue.length();
 						int size = rsmd.getColumnDisplaySize(col);
 						int spaces = (size - valueSize) / 2;
